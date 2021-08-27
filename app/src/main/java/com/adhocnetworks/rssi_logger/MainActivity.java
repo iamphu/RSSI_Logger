@@ -2,7 +2,6 @@ package com.adhocnetworks.rssi_logger;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -35,20 +34,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Permission variables
     public static final int WRITE_PERMISSION = 101;
     private final ArrayList<Integer> RSSI_list = new ArrayList<Integer>(); // Keeps track of the RSSI values
-    //  Delay in milliseconds
-    private final int delay = 500;
+    // Measurement period in milliseconds
+    private final int measurePeriod = 500;
+    // Preview period in milliseconds
+    private final int previewPeriod = 250;
     private final Handler handler = new Handler();    // Handler and runnable to create recurring measuring
-    private Runnable myRunnable;
+    private Runnable rssiRunnable;
+    private Runnable rssiPreviewRunnable;
     // Keeps track of the amount of samples
     private int numSamples = 0;
+    private boolean hasPerms = false; // Check whether RSSI preview can start
     private String saveDescription = ""; // Custom description by the user
     private boolean measureIsOn = false; // Measurement has started or not
     // WiFi variables
     private WifiManager wifiManager;
     private WifiInfo wifiInfo;
     // Component variables
-    private TextView samples, values;
+    private TextView sampleCount, values, previewValue;
     private Button buttonStart, buttonClear, buttonSave;
+
+    private int getWiFiRSSI() {
+        wifiInfo = wifiManager.getConnectionInfo();
+        return wifiInfo.getRssi();
+    }
+
+    private void addRSSIMeasurement(int rssi) {
+        RSSI_list.add(rssi);
+        numSamples++;
+
+        sampleCount.setText("Amount of samples: " + numSamples);
+        values.setText(String.valueOf(rssi));
+    }
+
+    /**
+     * The RSSI value which is not logged, only serves as preview
+     * @param rssi the integer value received from the WiFi manager
+     */
+    private void updateRSSIPreview(int rssi) {
+        previewValue.setText(String.valueOf(rssi));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +80,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         // Create textviews
-        samples = (TextView) findViewById(R.id.textView_Samples);
+        sampleCount = (TextView) findViewById(R.id.textView_SampleCount);
         values = (TextView) findViewById(R.id.textView_RSSI);
+        previewValue = (TextView) findViewById(R.id.textView_RSSI_preview);
 
         // Create buttons
         buttonStart = (Button) findViewById(R.id.buttonStart);
@@ -73,19 +98,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonSave.setOnClickListener(this);
 
         // Create recurring measurement + update
-        myRunnable = () -> {
-            Log.d("Runnable", "Runnable created");
-            wifiInfo = wifiManager.getConnectionInfo();
-            values.setText(String.valueOf(wifiInfo.getRssi()));
-            RSSI_list.add(wifiInfo.getRssi());
-            numSamples++;
-            samples.setText("Amount of samples: " + numSamples);
-            handler.postDelayed(myRunnable, delay);
+        rssiRunnable = () -> {
+            int receivedRSSI = getWiFiRSSI();
+
+            this.addRSSIMeasurement(receivedRSSI);
+
+            handler.postDelayed(rssiRunnable, measurePeriod);
+
+            Log.d("Runnable", "Called runnable for measurement logging");
+        };
+
+        rssiPreviewRunnable = () -> {
+            int receivedRSSI = getWiFiRSSI();
+
+            this.updateRSSIPreview(receivedRSSI);
+
+            handler.postDelayed(rssiPreviewRunnable, previewPeriod);
         };
 
         // Check if permission has been granted already, if not requests for permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        hasPerms = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        if (!hasPerms) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION);
+        }
+        else {
+            handler.postDelayed(rssiPreviewRunnable, previewPeriod);
         }
     }
 
@@ -132,12 +169,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     buttonStart.setText("Stop Measuring");
                     buttonSave.setEnabled(false);
                     buttonClear.setEnabled(false);
-                    handler.postDelayed(myRunnable, delay);
+                    handler.postDelayed(rssiRunnable, measurePeriod);
                     measureIsOn = true;
                 } else {
                     Log.d("Runnable", "Runnable stopped");
                     buttonStart.setText("Start Measuring");
-                    handler.removeCallbacks(myRunnable);
+                    handler.removeCallbacks(rssiRunnable);
                     buttonSave.setEnabled(true);
                     buttonClear.setEnabled(true);
                     measureIsOn = false;
@@ -148,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("Button", "Data cleared");
                 RSSI_list.clear();
                 numSamples = 0;
-                samples.setText("Amount of samples: " + numSamples);
+                sampleCount.setText("Amount of samples: " + numSamples);
                 values.setText(String.valueOf(0));
                 break;
             }
