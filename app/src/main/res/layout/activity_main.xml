@@ -9,13 +9,13 @@
     <Button
         android:id="@+id/buttonStart"
         android:layout_width="296dp"
-        android:layout_height="70dp"
+        android:layout_height="100dp"
         android:layout_marginStart="132dp"
         android:layout_marginLeft="132dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="130dp"
         android:layout_marginRight="130dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="16dp"
         android:text="Start Measuring"
         android:textColor="#8BC34A"
         android:textSize="24sp"
@@ -32,7 +32,7 @@
         android:layout_height="70dp"
         android:layout_marginStart="50dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="7dp"
@@ -51,7 +51,7 @@
         android:layout_height="70dp"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="50dp"
         android:layout_marginRight="50dp"
         android:layout_marginBottom="7dp"
@@ -87,7 +87,7 @@
         android:background="@android:color/darker_gray"
         app:layout_constraintBottom_toTopOf="@id/textView_RSSIText"
         app:layout_constraintTop_toTopOf="@id/textView_SampleCount"
-        app:layout_constraintVertical_bias="0.79"
+        app:layout_constraintVertical_bias="0.73"
         tools:layout_editor_absoluteX="0dp" />
 
     <TextView
@@ -100,12 +100,12 @@
         android:layout_marginEnd="135dp"
         android:layout_marginRight="135dp"
         android:gravity="center"
-        android:text="RSSI"
+        android:text="RSSI logger"
         android:textColor="#8BC34A"
-        android:textSize="80sp"
+        android:textSize="50sp"
         app:layout_constraintBottom_toTopOf="@+id/textView_RSSI"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_SampleCount" />
 
@@ -118,10 +118,40 @@
         android:text="0"
         android:textSize="140sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.701"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_RSSIText" />
+
+    <TextView
+        android:id="@+id/textView_RSSI3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:text="Logged"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.26"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_RSSIText"
+        app:layout_constraintVertical_bias="0.513" />
+
+    <TextView
+        android:id="@+id/textView_RSSI4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:text="Current"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.26"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_RSSIText"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/textView_RSSI_preview"
@@ -134,6 +164,7 @@
         android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.673"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_RSSIText"

@@ -99,13 +99,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Create recurring measurement + update
         rssiRunnable = () -> {
-            int receivedRSSI = getWiFiRSSI();
+            int newRSSI = getWiFiRSSI();
 
-            this.addRSSIMeasurement(receivedRSSI);
+            this.addRSSIMeasurement(newRSSI);
 
             handler.postDelayed(rssiRunnable, measurePeriod);
 
-            Log.d("Runnable", "Called runnable for measurement logging");
+            Log.d("Runnable", "RSSI measured: " + newRSSI);
         };
 
         rssiPreviewRunnable = () -> {
@@ -121,9 +121,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!hasPerms) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION);
         }
-        else {
-            handler.postDelayed(rssiPreviewRunnable, previewPeriod);
-        }
+
+        // Needs WiFi access which is given before app boots
+        handler.postDelayed(rssiPreviewRunnable, previewPeriod);
     }
 
     // Requests for permission to write to external storage (to store the RSSI values)
