@@ -7,24 +7,23 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/buttonStart"
-        android:layout_width="296dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="132dp"
-        android:layout_marginLeft="132dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginRight="130dp"
-        android:layout_marginBottom="16dp"
-        android:text="Start Measuring"
-        android:textColor="#8BC34A"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonClear"
+        android:id="@+id/buttonSave"
+        android:layout_width="140dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="47dp"
+        android:text="Save Data"
+        android:textColor="#385C0E"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.61" />
+        app:layout_constraintStart_toEndOf="@+id/buttonClear"
+        app:layout_constraintTop_toBottomOf="@+id/buttonStart"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/buttonClear"
@@ -32,36 +31,87 @@
         android:layout_height="70dp"
         android:layout_marginStart="50dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="25dp"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="47dp"
         android:text="Clear Data"
         android:textColor="#FF5722"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/buttonStart"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonSave"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_SampleCount"
-        app:layout_constraintVertical_bias="0.497" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonStart"
+        app:layout_constraintVertical_bias="1.0" />
 
-    <Button
-        android:id="@+id/buttonSave"
-        android:layout_width="140dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="7dp"
-        android:text="Save Data"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/buttonStart"
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_marginTop="340dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toTopOf="@id/textView_SampleCount"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:id="@+id/textView_RSSIText"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="135dp"
+        android:layout_marginLeft="135dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="135dp"
+        android:layout_marginRight="135dp"
+        android:gravity="center"
+        android:text="RSSI logger"
+        android:textColor="#8BC34A"
+        android:textSize="50sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView_SampleCount"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonClear"
-        app:layout_constraintTop_toBottomOf="@id/textView_SampleCount"
-        app:layout_constraintVertical_bias="0.497" />
+        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_Version"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:text="v.1.1 \n Aug 2021"
+        android:textColor="#717171"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_RSSI"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="380dp"
+        android:gravity="center"
+        android:text="0"
+        android:textSize="100sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.837"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_SampleCount" />
+
+    <TextView
+        android:id="@+id/textView_RSSI4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="92dp"
+        android:layout_marginBottom="316dp"
+        android:gravity="center"
+        android:text="Current"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.195"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_RSSI3" />
 
     <TextView
         android:id="@+id/textView_SampleCount"
@@ -74,84 +124,10 @@
         android:gravity="center"
         android:text="Amount of Samples: 0"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView_RSSI"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonStart"
-        app:layout_constraintVertical_bias="0.38" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toTopOf="@id/textView_RSSIText"
-        app:layout_constraintTop_toTopOf="@id/textView_SampleCount"
-        app:layout_constraintVertical_bias="0.73"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <TextView
-        android:id="@+id/textView_RSSIText"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="135dp"
-        android:layout_marginLeft="135dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="135dp"
-        android:layout_marginRight="135dp"
-        android:gravity="center"
-        android:text="RSSI logger"
-        android:textColor="#8BC34A"
-        android:textSize="50sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView_RSSI"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.509"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_SampleCount" />
-
-    <TextView
-        android:id="@+id/textView_RSSI"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:gravity="center"
-        android:text="0"
-        android:textSize="140sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.701"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_RSSIText" />
-
-    <TextView
-        android:id="@+id/textView_RSSI3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:gravity="center"
-        android:text="Logged"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.26"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_RSSIText"
-        app:layout_constraintVertical_bias="0.513" />
-
-    <TextView
-        android:id="@+id/textView_RSSI4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:gravity="center"
-        android:text="Current"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.26"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_RSSIText"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_RSSIText" />
 
     <TextView
         android:id="@+id/textView_RSSI_preview"
@@ -164,10 +140,43 @@
         android:textSize="34sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.673"
+        app:layout_constraintHorizontal_bias="0.778"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_RSSIText"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.48" />
+
+    <TextView
+        android:id="@+id/textView_RSSI3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="78dp"
+        android:layout_marginBottom="448dp"
+        android:gravity="center"
+        android:text="Logged"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.183"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_SampleCount" />
+
+    <Button
+        android:id="@+id/buttonStart"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="54dp"
+        android:layout_marginLeft="54dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="54dp"
+        android:layout_marginRight="54dp"
+        android:background="#676565"
+        android:text="Start Measuring"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
