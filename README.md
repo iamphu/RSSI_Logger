@@ -25,7 +25,7 @@ When the app is first opened, the app requests permission to write to the extern
 The UI is straightforward; start measuring, saving the data and clear data. Clicking the start measuring button will start a scheduler to read out the RSSI value every **0.5 seconds** (feel free to change this in `measurePeriod` (milliseconds) in `MainActivity`, but beware that RSSI might not change very fast.). 
 The app will continue measuring until the user stops the measurement. The user can give a description of the measurement to the filename, after which it will save in the default external directory. A possible path to the saved data is: `/Android/data/com.adhocnetworks.rssi_logger/files/`. Another way to find the path is to search for the filename which will shortly show up on the bottom of the screen right after saving the file. After everything has been saved, the clear button can be used to clear all old data and start a new measurement.
 
-<img src="https://user-images.githubusercontent.com/6005355/131129449-1f8f179c-4f27-4c7f-afd7-77e8b8638bc5.png" alt="RSSI Logger app" width="40%"/>
+<img src="https://user-images.githubusercontent.com/6005355/131145253-400a7b8d-ab9b-4429-be6b-93862954a3a7.png" alt="RSSI Logger app" width="40%"/>
 
 
 > **This app is made for students following the course ET4388 Ad-hoc Networks 2020-2022 at the Delft University of Technology**
