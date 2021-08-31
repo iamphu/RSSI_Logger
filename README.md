@@ -1,7 +1,9 @@
 # RSSI Logger
 RSSI Logger is a simple app that can read out RSSI values over time and store them on your Android smartphone. The app is not on the Google Play Store and can only be downloaded from the releases pages.
 
-Build the app yourself using [Android Studio](https://developer.android.com/studio). Its recommended to use Android Studio 2020.3.1 and Java 1.8+. Since the newest Java 11 did not pass Google Play Protect and did not install properly, we accept any Pull Request for developers who know how to fix this problem.
+Build the app yourself using [Android Studio](https://developer.android.com/studio). Its recommended to use Android Studio 2020.3.1 and Java 1.8+.
+
+**Note about Android 11** this version of Android has more strict permission requirements on scoped storage, which is currently missing. We accept any Pull Request in order to tackle this for that version of Android.
 
 ## The App
 ### Installation
