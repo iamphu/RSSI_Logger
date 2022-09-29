@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">RSSI Logger</string>
+    <string name="rssi_arrow">RSSI Arrow</string>
+    <string name="rssi_legend">RSSI Legend</string>
+    <string name="default_rssi">0</string>
+    <string name="default_dbm">dBm</string>
+    <string name="default_samples">Amount of samples: 0</string>
+    <string name="default_measure">Start Measuring</string>
+    <string name="default_clear">Clear Data</string>
+    <string name="default_save">Save Data</string>
+
 </resources>

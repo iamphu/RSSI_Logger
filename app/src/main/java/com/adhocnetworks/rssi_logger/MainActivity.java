@@ -1,29 +1,25 @@
 package com.adhocnetworks.rssi_logger;
 
-import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.Intent;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.InputType;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,27 +27,24 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    // Permission variables
-    public static final int WRITE_PERMISSION = 101;
+    // Request code to create RSSI files
+    private static final int CREATE_FILE = 1;
     private final ArrayList<Integer> RSSI_list = new ArrayList<Integer>(); // Keeps track of the RSSI values
     // Measurement period in milliseconds
     private final int measurePeriod = 500;
-    // Preview period in milliseconds
-    private final int previewPeriod = 250;
     private final Handler handler = new Handler();    // Handler and runnable to create recurring measuring
     private Runnable rssiRunnable;
-    private Runnable rssiPreviewRunnable;
     // Keeps track of the amount of samples
     private int numSamples = 0;
-    private boolean hasPerms = false; // Check whether RSSI preview can start
-    private String saveDescription = ""; // Custom description by the user
     private boolean measureIsOn = false; // Measurement has started or not
     // WiFi variables
     private WifiManager wifiManager;
     private WifiInfo wifiInfo;
     // Component variables
-    private TextView sampleCount, values, previewValue;
+    private TextView sampleCount, previewValue;
+    private ImageView rssiArrow;
     private Button buttonStart, buttonClear, buttonSave;
+    private final float[] rssiIndicatorRange = {1.0f, 226.0f};
 
     private int getWiFiRSSI() {
         wifiInfo = wifiManager.getConnectionInfo();
@@ -63,7 +56,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         numSamples++;
 
         sampleCount.setText("Amount of samples: " + numSamples);
-        values.setText(String.valueOf(rssi));
+    }
+
+    // NEW FILE STORAGE (API level 19+): https://developer.android.com/training/data-storage/shared/documents-files
+    // Opens dialog window for the user to pick a location
+    private void createFile() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/plain");
+        DateFormat df = new SimpleDateFormat("yyMMdd-HHmm");
+        intent.putExtra(Intent.EXTRA_TITLE, "rssi_data_" + df.format(new Date()) + ".txt");
+        startActivityForResult(intent, CREATE_FILE);
+    }
+
+    // Retrieves code based on what the user did during the dialog window
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        super.onActivityResult(requestCode, resultCode, resultData);
+        if (requestCode == CREATE_FILE && resultCode == Activity.RESULT_OK) {
+            // The result data contains a URI for the document or directory that the user selected.
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+                // Perform operations on the document using its URI.
+                createTextFile((uri));
+            }
+        }
+    }
+
+    // Stores the RSSI values to the user selected folder
+    private void createTextFile(Uri uri) {
+        try {
+            ParcelFileDescriptor pfd = this.getContentResolver().openFileDescriptor(uri, "w");
+            FileOutputStream fileOutputStream = new FileOutputStream(pfd.getFileDescriptor());
+            fileOutputStream.write((RSSI_list.toString()).getBytes());
+            // Let the document provider know you're done by closing the stream.
+            fileOutputStream.close();
+            pfd.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -80,14 +114,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         // Create textviews
-        sampleCount = (TextView) findViewById(R.id.textView_SampleCount);
-        values = (TextView) findViewById(R.id.textView_RSSI);
+        sampleCount = (TextView) findViewById(R.id.textview_samplecount);
         previewValue = (TextView) findViewById(R.id.textView_RSSI_preview);
 
+        // Create imageview
+        rssiArrow = (ImageView) findViewById(R.id.imageview_arrow);
+
         // Create buttons
-        buttonStart = (Button) findViewById(R.id.buttonStart);
-        buttonClear = (Button) findViewById(R.id.buttonClear);
-        buttonSave = (Button) findViewById(R.id.buttonSave);
+        buttonStart = (Button) findViewById(R.id.button_start);
+        buttonClear = (Button) findViewById(R.id.button_clear);
+        buttonSave = (Button) findViewById(R.id.button_save);
 
         // Set WiFi manager
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -98,72 +134,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonSave.setOnClickListener(this);
 
         // Create recurring measurement + update
+        // Preview + measurement same runnable as RSSI gets updated roughly 2-3 sec (see below)
+        // https://stackoverflow.com/questions/27339503/get-signal-strength-of-wifi-connection-from-android-drivers-in-terminal/63316932#63316932
         rssiRunnable = () -> {
             int newRSSI = getWiFiRSSI();
 
-            this.addRSSIMeasurement(newRSSI);
+            if (this.measureIsOn) {
+                this.addRSSIMeasurement(newRSSI);
+            }
 
+            // Update the preview RSSI number
+            this.updateRSSIPreview(newRSSI);
+            float ZRotationArrow = newRSSI*(this.rssiIndicatorRange[1] - this.rssiIndicatorRange[0])/(-100); // -100: max scale of the indicator
+            ZRotationArrow = ZRotationArrow < this.rssiIndicatorRange[0] ? this.rssiIndicatorRange[0] : ZRotationArrow;
+            ZRotationArrow = ZRotationArrow > this.rssiIndicatorRange[1] ? this.rssiIndicatorRange[1] : ZRotationArrow;
+            rssiArrow.setRotation(ZRotationArrow);
+
+            // Update the RSSI indicator
             handler.postDelayed(rssiRunnable, measurePeriod);
 
             Log.d("Runnable", "RSSI measured: " + newRSSI);
         };
 
-        rssiPreviewRunnable = () -> {
-            int receivedRSSI = getWiFiRSSI();
-
-            this.updateRSSIPreview(receivedRSSI);
-
-            handler.postDelayed(rssiPreviewRunnable, previewPeriod);
-        };
-
-        // Check if permission has been granted already, if not requests for permission
-        hasPerms = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-        if (!hasPerms) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION);
-        }
-
         // Needs WiFi access which is given before app boots
-        handler.postDelayed(rssiPreviewRunnable, previewPeriod);
-    }
-
-    // Requests for permission to write to external storage (to store the RSSI values)
-    // If the user does not give permission, the app can not function and will exit
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        // If request is cancelled, the result array is empty.
-        if (requestCode == WRITE_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("Permission", "Permission has been granted");
-                }
-            } else {
-                finish();
-                System.exit(0);
-            }
-        }
-    }
-
-    // A writer that will save the data to a .txt file that can be opened on a computer
-    private void writeToFile(String data, String filename) {
-        try {
-            File file = new File(this.getExternalFilesDir(null), filename + ".txt");
-            FileOutputStream fileOutput = new FileOutputStream(file);
-            OutputStreamWriter os = new OutputStreamWriter(fileOutput);
-            os.write(data);
-            os.flush();
-            os.close();
-            Toast.makeText(this, "Data is saved as: " + filename + ".txt", Toast.LENGTH_LONG).show();
-            Log.d("Data", data);
-        } catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
+        handler.postDelayed(rssiRunnable, measurePeriod);
     }
 
     // onClick events
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.buttonStart: { // Turn measuring on or off
+            case R.id.button_start: { // Turn measuring on or off
                 if (!measureIsOn) {
                     Log.d("Runnable", "Runnable started");
                     buttonStart.setText("Stop Measuring");
@@ -181,35 +182,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             }
-            case R.id.buttonClear: { // Clear data
+            case R.id.button_clear: { // Clear data
                 Log.d("Button", "Data cleared");
                 RSSI_list.clear();
                 numSamples = 0;
                 sampleCount.setText("Amount of samples: " + numSamples);
-                values.setText(String.valueOf(0));
+//                values.setText(String.valueOf(0));
                 break;
             }
-            case R.id.buttonSave: { // Save data
-                Log.d("Runnable", "Save button clicked");
+            case R.id.button_save: { // Save data
+                Log.d("File Storage", "Save button clicked");
 
-                // Creates a prompt for the user to write the description
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Input filename description");
-
-                // Set up the input
-                final EditText input = new EditText(this);
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
-                builder.setView(input);
-
-                // Set up the buttons
-                builder.setPositiveButton("OK", (dialog, which) -> {
-                    saveDescription = input.getText().toString();
-                    DateFormat df = new SimpleDateFormat("yyMMdd-HHmm");
-                    writeToFile(RSSI_list.toString(), df.format(new Date()) + "_" + saveDescription);
-                });
-                builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
-                builder.show();
+                // Uses Android Storage Access Framework now
+                createFile();
 
                 break;
             }
