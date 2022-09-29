@@ -48,7 +48,7 @@ RSSI Logger only requires two permissions, namely:
 The UI is straightforward; start measuring, saving the data and clear data. Clicking the start measuring button will start a scheduler to read out the RSSI value every **0.5 seconds** (feel free to change this in `measurePeriod` (milliseconds) in `MainActivity`, but beware that RSSI might not change very fast.). 
 The app will continue measuring until the user stops the measurement. You are able to clear your data if something went wrong, or you can save the data. Saving the data will prompt you to choose a location where the data will be stored, with the option to change the filename. After everything has been saved, the clear button can be used to clear all old data and start a new measurement.
 
-<img src="https://user-images.githubusercontent.com/6005355/131145253-400a7b8d-ab9b-4429-be6b-93862954a3a7.png" alt="RSSI Logger app" width="40%"/>
+<img src="https://user-images.githubusercontent.com/9060308/192966928-ec22f717-6f96-4ecb-81de-c240efbbff3e.jpg" alt="RSSI Logger app" width="40%"/>
 
 
 > **This app is made for students following the course ET4388 Ad-hoc Networks 2020-2023 at the Delft University of Technology**
