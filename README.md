@@ -20,7 +20,7 @@ If there any issues, let me know your smartphone model and your android version.
 As this version is a mostly to solve the storage issue, there are some minor other issues:
 > When opening the application, the RSSI value may not change
 
-Closing the application and reopening it fixed the issue for means
+Closing the application and reopening it fixed the issue for me
 
 > The RSSI arrow indicator is mismatched on my smartphone
 
