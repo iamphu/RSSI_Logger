@@ -28,6 +28,8 @@ I know
 
 ## The App
 ### Installation
+[Download v1.2-alpha September 2022 edition from Release](https://github.com/iamphu/RSSI_Logger/releases/tag/v1.2-alpha) - it supports API 19 (Android 4.4 KitKat) as lowest, and has API 33 (Tirsamisu) as target 
+
 [Download v1.1 August 2021 edition from Releases](https://github.com/iamphu/RSSI_Logger/releases/tag/v1.1) - this version should still work for Android 10.0 devices and lower
 
 [Download v1.0 September 2020 edition from Releases](https://github.com/iamphu/RSSI_Logger/releases/tag/v1.0) - this is the old version!
